@@ -17,6 +17,23 @@ class Field(tk.Frame):
         self.number_of_bombs.set(settings.number_of_bombs)
         self.bomb_counter = tk.Label(self, textvariable=self.number_of_bombs, font="courier 15 bold", fg="red")
         self.bomb_counter.grid(column=0, columnspan=len(self.columns), row=0)
+        self.folder = os.path.dirname(__file__)
+        self.cell_images = {
+            "closed": tk.PhotoImage(file=(os.path.join(self.folder, "../img/closed.png"))),
+            "last": tk.PhotoImage(file=(os.path.join(self.folder, "../img/boom.png"))),
+            "bomb": tk.PhotoImage(file=(os.path.join(self.folder, "../img/bomb.png"))),
+            "not_bomb": tk.PhotoImage(file=(os.path.join(self.folder, "../img/wrong.png"))),
+            "marked": tk.PhotoImage(file=(os.path.join(self.folder, "../img/marked.png"))),
+            "0": tk.PhotoImage(file=(os.path.join(self.folder, "../img/empty.png"))),
+            "1": tk.PhotoImage(file=(os.path.join(self.folder, "../img/1.png"))),
+            "2": tk.PhotoImage(file=(os.path.join(self.folder, "../img/2.png"))),
+            "3": tk.PhotoImage(file=(os.path.join(self.folder, "../img/3.png"))),
+            "4": tk.PhotoImage(file=(os.path.join(self.folder, "../img/4.png"))),
+            "5": tk.PhotoImage(file=(os.path.join(self.folder, "../img/5.png"))),
+            "6": tk.PhotoImage(file=(os.path.join(self.folder, "../img/6.png"))),
+            "7": tk.PhotoImage(file=(os.path.join(self.folder, "../img/7.png"))),
+            "8": tk.PhotoImage(file=(os.path.join(self.folder, "../img/8.png")))
+        }
         self.grid()
         self.create_field()
 
@@ -24,14 +41,13 @@ class Field(tk.Frame):
     def create_field(self):
         for i in range(self.rows):
             for j in self.columns:
-                self.cells[j+str(i)] = Cell(self, i, j)
+                self.cells[j+str(i)] = Cell(self, i, j, self.cell_images["closed"], self.cell_images["marked"])
         counter = 0
         # Placing bombs
         while counter < self.number_of_bombs.get():
             cell = self.get_random_cell()
             if not cell.is_bomb():
-                cell.bomb = True
-                cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder, "../img/bomb.png"))))
+                cell.add_bomb(self.cell_images["bomb"], self.cell_images["last"])
                 counter += 1
         # Filling non-bomb cells with numbers of nearby bombs
         for name in self.cells:
@@ -42,12 +58,9 @@ class Field(tk.Frame):
                 for n in neighbours:
                     if self.cells[n].is_bomb():
                         counter += 1
-                if counter == 0:
-                    cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder, "../img/empty.png"))))
-                else:
-                    cell.nearby_bombs = counter
-                    cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder,
-                                                                           "../img/{}.png".format(counter)))))
+                cell.nearby_bombs = counter
+                cell.set_opened_image(self.cell_images["{}".format(counter)])
+                cell.set_bomb_image(self.cell_images["not_bomb"])
         # Placing cells on the field
         for name in self.cells:
             cell = self.cells[name]
