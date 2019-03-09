@@ -13,7 +13,7 @@ class Cell(tk.Button):
         self.bomb = False
         self.state = "closed"
         self.closed_image = background
-        self.configure(image=self.closed_image)
+        self.configure(image=self.get_closed_image())
         self.last_image = property(self.get_last_image, self.set_last_image)
         self.bomb_image = property(self.get_bomb_image, self.set_bomb_image)
         self.marked_image = mark
@@ -75,11 +75,11 @@ class Cell(tk.Button):
         self.bomb = True
         self.set_bomb_image(bomb_image)
         self.set_opened_image(bomb_image)
-        self.last_image = last_image
+        self.set_last_image(last_image)
 
     def close(self):
         self.state = "closed"
-        self.configure(image=self.closed_image, state="normal")
+        self.configure(image=self.get_closed_image(), state="normal")
 
     def open(self):
         if not self.is_marked():
@@ -108,7 +108,7 @@ class Cell(tk.Button):
     def show(self, place_of_death):
         if ((self.is_bomb() and not self.is_marked() and not place_of_death) or
                 (not self.is_bomb() and self.is_marked())):
-            self.configure(image=self.bomb_image)
+            self.configure(image=self.get_bomb_image())
 
     # Other actions
     def automated_opening(self, event=None):
@@ -131,7 +131,7 @@ class Cell(tk.Button):
                 cell.configure(relief="raised")
 
     def blow_up(self):
-        self.configure(image=self.last_image)
+        self.configure(image=self.get_last_image())
         self.field.place_of_death = self.column + self.row
 
     # Function recursively checks if the cell has no bombs around and opens them
