@@ -20,17 +20,8 @@ class Cell(tk.Button):
         self._bomb_image = tk.PhotoImage(file=(os.path.join(self.folder, "../img/bomb.png")))
         self._not_bomb_image = tk.PhotoImage(file=(os.path.join(self.folder, "../img/wrong.png")))
         self._marked_image = tk.PhotoImage(file=(os.path.join(self.folder, "../img/marked.png")))
-        self._opened_image = None
+        self.opened_image = property(self.get_opened_image, self.set_opened_image)
         self.bind("<Destroy>", self._on_destroy)
-
-    # Image control
-    def _get_opened_image(self):
-        return self._opened_image
-
-    def _set_opened_image(self, opened_image):
-        del self._opened_image
-        self._opened_image = opened_image
-    opened_image = property(_get_opened_image, _set_opened_image)
 
     # Getters
     def is_bomb(self):
@@ -44,6 +35,13 @@ class Cell(tk.Button):
 
     def is_marked(self):
         return self.state == "marked"
+
+    def get_opened_image(self):
+        return self.opened_image
+
+    # Setters
+    def set_opened_image(self, opened_image):
+        self.opened_image = opened_image
 
     # State changers
     def activate(self):
@@ -68,7 +66,7 @@ class Cell(tk.Button):
 
     def open(self):
         if not self.is_marked():
-            self.configure(image=self._opened_image, relief="sunken")
+            self.configure(image=self.get_opened_image(), relief="sunken")
             self.unbind("<B1>")
             self.state = "disabled"
             if self.is_bomb():
@@ -150,9 +148,9 @@ class Cell(tk.Button):
 
     # Lifecycle handlers
     def _on_destroy(self, *args):
-        del(self._closed_image)
-        del(self._last_image)
-        del(self._bomb_image)
-        del(self._not_bomb_image)
-        del(self._marked_image)
-        del(self._opened_image)
+        del self._closed_image
+        del self._last_image
+        del self._bomb_image
+        del self._not_bomb_image
+        del self._marked_image
+        del self.opened_image

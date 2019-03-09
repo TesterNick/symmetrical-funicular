@@ -31,6 +31,7 @@ class Field(tk.Frame):
             cell = self.get_random_cell()
             if not cell.is_bomb():
                 cell.bomb = True
+                cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder, "../img/bomb.png"))))
                 counter += 1
         # Filling non-bomb cells with numbers of nearby bombs
         for name in self.cells:
@@ -42,10 +43,11 @@ class Field(tk.Frame):
                     if self.cells[n].is_bomb():
                         counter += 1
                 if counter == 0:
-                    cell.opened_image = tk.PhotoImage(file=(os.path.join(cell.folder, "../img/empty.png")))
+                    cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder, "../img/empty.png"))))
                 else:
                     cell.nearby_bombs = counter
-                    cell.opened_image = tk.PhotoImage(file=(os.path.join(cell.folder, "../img/{}.png".format(counter))))
+                    cell.set_opened_image(tk.PhotoImage(file=(os.path.join(cell.folder,
+                                                                           "../img/{}.png".format(counter)))))
         # Placing cells on the field
         for name in self.cells:
             cell = self.cells[name]
