@@ -51,12 +51,12 @@ class Application(tk.Frame):
         self.field.show_the_bombs()
         SimpleDialog(self, "win")
 
-    def exit(self, event=None):
+    def exit(self):
         for child in self.parent.winfo_children():
             child.destroy()
         self.parent.quit()
 
-    def restart(self, event=None):
+    def restart(self):
         for child in self.parent.winfo_children():
             child.destroy()
         self.__init__(self.parent, self.settings)
